@@ -886,19 +886,43 @@
     <div class="chart-section">
       <div class="chart-section-header">
         <div>
-          <div class="chart-section-title">HAZMAT Car Volumes by Sensor Location — Oregon</div>
-          <div class="chart-section-desc">Proportional circles show full-year 2025 hazmat car volumes at each of 15 Oregon sensors. Hover for directional breakdown. Larger circles indicate higher hazmat traffic.</div>
+          <div class="chart-section-title">HAZMAT Car Flows by Rail Segment — Oregon</div>
+          <div class="chart-section-desc">Each line follows the actual rail geometry; its thickness is proportional to the number of hazmat car-traversals on that segment in 2025. Filter by <strong>route</strong> and by <strong>commodity</strong> to isolate a specific flow — e.g. just chlorine tank cars. Click a segment to chart its monthly trend below. Counts are car-traversals derived by linking the same rail car across consecutive sensors.</div>
         </div>
       </div>
       <div style="padding:16px 24px 28px;">
+        <!-- Filter controls -->
+        <div style="display:flex;gap:18px;flex-wrap:wrap;align-items:flex-end;margin-bottom:14px;">
+          <div style="display:flex;flex-direction:column;gap:4px;">
+            <label for="flow-chem" style="font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-muted);">Commodity</label>
+            <select id="flow-chem" style="font-family:var(--font-body);font-size:13px;font-weight:500;border:1px solid var(--border);border-radius:6px;padding:7px 10px;color:var(--heading);background:#fff;cursor:pointer;min-width:240px;"></select>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:4px;">
+            <label for="flow-route" style="font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-muted);">Route</label>
+            <select id="flow-route" style="font-family:var(--font-body);font-size:13px;font-weight:500;border:1px solid var(--border);border-radius:6px;padding:7px 10px;color:var(--heading);background:#fff;cursor:pointer;min-width:200px;"></select>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:4px;">
+            <label for="flow-month" style="font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-muted);">Map Period</label>
+            <select id="flow-month" style="font-family:var(--font-body);font-size:13px;font-weight:500;border:1px solid var(--border);border-radius:6px;padding:7px 10px;color:var(--heading);background:#fff;cursor:pointer;min-width:150px;"></select>
+          </div>
+        </div>
         <div id="hazmat-map-container" style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;height:520px;overflow:hidden;position:relative;"></div>
-        <div style="display:flex;gap:20px;margin-top:14px;flex-wrap:wrap;">
-          <div style="display:flex;align-items:center;gap:8px;font-size:14px;color:var(--text-muted);">
-            <div style="width:14px;height:14px;border-radius:50%;background:rgba(224,93,0,0.5);border:2px solid rgba(224,93,0,0.9);"></div> HAZMAT volume (proportional)
+        <div style="display:flex;gap:20px;margin-top:14px;flex-wrap:wrap;align-items:center;">
+          <div id="flow-legend" style="display:flex;align-items:center;gap:8px;font-size:14px;color:var(--text-muted);">
+            <div id="flow-legend-swatch" style="width:26px;height:8px;background:#e05d00;border-radius:3px;"></div> <span id="flow-legend-text">Hazmat car-traversals (line thickness ∝ volume)</span>
           </div>
           <div style="display:flex;align-items:center;gap:8px;font-size:14px;color:var(--text-muted);">
             <div style="width:16px;height:3px;background:#b0b8c4;border-radius:2px;"></div> Rail network
           </div>
+        </div>
+        <!-- Per-segment / per-chemical monthly trend -->
+        <div style="margin-top:22px;border-top:1px solid var(--border);padding-top:18px;">
+          <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px;">
+            <div class="chart-section-title" style="font-size:15px;" id="flow-trend-title">Monthly Trend — All Hazmat · Entire Network</div>
+            <button id="flow-trend-reset" style="display:none;font-family:var(--font-body);font-size:12px;font-weight:600;color:var(--rs);background:none;border:1px solid var(--border);border-radius:5px;padding:4px 10px;cursor:pointer;">↺ Show entire network</button>
+          </div>
+          <div class="chart-section-desc" style="margin-bottom:6px;">2025 monthly car-traversals for the selected commodity on the selected segment. Click any segment on the map above to focus it.</div>
+          <div class="chart-wrap"><canvas id="flow-trend-chart" style="max-height:260px;"></canvas></div>
         </div>
       </div>
     </div>
@@ -1668,51 +1692,157 @@ initCharts.hazmat = () => {
     document.getElementById('hazmat-sensor-count').textContent = S.sensors_reporting;
     document.getElementById('hazmat-class-count').textContent = S.unique_un_placards;
 
-    // ── Hazmat bubble map ──
-    const sensorGeo = {
-      type:'FeatureCollection',
-      features: hz.sensor_volumes.map(s=>({
-        type:'Feature',
-        geometry:{type:'Point',coordinates:[s.lng,s.lat]},
-        properties:{
-          name:s.name, value:s.total_hazmat_cars, railways:JSON.stringify(s.railways),
-          subdivision:s.subdivision||'',
-          nb:s.direction_breakdown.Northbound||0, sb:s.direction_breakdown.Southbound||0,
-          eb:s.direction_breakdown.Eastbound||0, wb:s.direction_breakdown.Westbound||0
-        }
-      }))
-    };
-    const maxVal = Math.max(...hz.sensor_volumes.map(s=>s.total_hazmat_cars));
-    const map = createSensorMap('hazmat-map-container',{center:[-121,44.3],zoom:5.8});
-    map.on('load',()=>{
-      addRailNetworkLayer(map).finally(()=>{
-        map.addSource('hazmat-sensors',{type:'geojson',data:sensorGeo});
-        map.addLayer({
-          id:'hazmat-glow',type:'circle',source:'hazmat-sensors',
-          paint:{'circle-radius':['interpolate',['linear'],['get','value'],0,8,maxVal,45],
-            'circle-color':'rgba(224,93,0,0.15)','circle-blur':0.8}
-        });
-        map.addLayer({
-          id:'hazmat-circles',type:'circle',source:'hazmat-sensors',
-          paint:{'circle-radius':['interpolate',['linear'],['get','value'],0,5,maxVal,35],
-            'circle-color':'rgba(224,93,0,0.45)','circle-stroke-color':'rgba(224,93,0,0.9)','circle-stroke-width':2}
-        });
-        const popup=new mapboxgl.Popup({closeButton:false,closeOnClick:false,className:'rs-map-popup',offset:8});
-        map.on('mouseenter','hazmat-circles',e=>{
-          map.getCanvas().style.cursor='pointer';
-          const p=e.features[0].properties;
-          popup.setLngLat(e.features[0].geometry.coordinates)
-            .setHTML(`<div style="font-weight:600;color:var(--heading);margin-bottom:2px;">${p.name}</div>`
+    // ── Hazmat segment flow map (real geometry, route + commodity filters) ──
+    fetch('data/oregon_hazmat_flow_geo.json'+_cb).then(r=>r.json()).then(flow=>{
+      const segLines=flow.features.filter(f=>f.geometry.type==='LineString');
+      const sensorPts=flow.features.filter(f=>f.geometry.type==='Point');
+      const months=flow.months||[];
+      const DEFAULT_COLOR='#e05d00';
+
+      // State
+      let chem='ALL', route='ALL', mon=-1, selSeg=null;
+
+      // ── Populate dropdowns ──
+      const chemSel=document.getElementById('flow-chem');
+      chemSel.innerHTML='<option value="ALL">All hazmat</option>';
+      const ogC=document.createElement('optgroup');ogC.label='By hazard class';
+      flow.classes.forEach(c=>{const o=document.createElement('option');o.value='CLASS:'+c.group;o.textContent=`${c.group} — ${c.total.toLocaleString()}`;ogC.appendChild(o);});
+      chemSel.appendChild(ogC);
+      const ogU=document.createElement('optgroup');ogU.label='By commodity';
+      flow.commodities.filter(c=>c.top).forEach(c=>{const o=document.createElement('option');o.value='UN:'+c.un;o.textContent=`${c.name} (${c.un}) — ${c.total.toLocaleString()}`;ogU.appendChild(o);});
+      chemSel.appendChild(ogU);
+
+      const routeSel=document.getElementById('flow-route');
+      routeSel.innerHTML='<option value="ALL">All routes</option>';
+      [...new Set(segLines.map(f=>f.properties.subdivision))].sort().forEach(s=>{const o=document.createElement('option');o.value=s;o.textContent=s;routeSel.appendChild(o);});
+
+      const monthSel=document.getElementById('flow-month');
+      monthSel.innerHTML='<option value="-1">Full Year 2025</option>';
+      months.forEach((m,i)=>{const o=document.createElement('option');o.value=i;o.textContent=m;monthSel.appendChild(o);});
+
+      // ── Accessors ──
+      function node(f){const p=f.properties;
+        if(chem==='ALL')return {total:p.total,monthly:p.monthly};
+        if(chem.startsWith('CLASS:'))return p.by_class[chem.slice(6)]||null;
+        if(chem.startsWith('UN:'))return p.by_commodity[chem.slice(3)]||null;
+        return null;}
+      function segVol(f){const n=node(f);if(!n)return 0;return mon<0?(n.total||0):((n.monthly&&n.monthly[mon])||0);}
+      function segMonthly(f){const n=node(f);return n&&n.monthly?n.monthly:Array(12).fill(0);}
+      function chemLabel(){if(chem==='ALL')return 'All Hazmat';
+        if(chem.startsWith('CLASS:'))return chem.slice(6);
+        const c=flow.commodities.find(x=>x.un===chem.slice(3));return c?`${c.name} (${c.un})`:chem.slice(3);}
+      function activeColor(){if(chem==='ALL')return DEFAULT_COLOR;
+        if(chem.startsWith('CLASS:')){const c=flow.classes.find(x=>x.group===chem.slice(6));return c?c.color:DEFAULT_COLOR;}
+        const c=flow.commodities.find(x=>x.un===chem.slice(3));return c?c.color:DEFAULT_COLOR;}
+      function visibleSegs(){return segLines.filter(f=>route==='ALL'||f.properties.subdivision===route);}
+      function maxVol(){return Math.max(...visibleSegs().map(segVol),1);}
+      function buildGeo(){return {type:'FeatureCollection',features:visibleSegs().map(f=>({
+        type:'Feature',geometry:f.geometry,
+        properties:{id:f.properties.id,subdivision:f.properties.subdivision,
+          sensor_a:f.properties.sensor_a,sensor_b:f.properties.sensor_b,_vol:segVol(f)}
+      }))};}
+
+      const map=createSensorMap('hazmat-map-container',{center:[-121,44.3],zoom:5.8});
+      const popup=new mapboxgl.Popup({closeButton:false,closeOnClick:false,className:'rs-map-popup',offset:8});
+
+      map.on('load',()=>{
+        addRailNetworkLayer(map).finally(()=>{
+          let mv=maxVol(), col=activeColor();
+          const W=()=>['interpolate',['linear'],['get','_vol'],0,0.6,mv,15];
+          const WG=()=>['interpolate',['linear'],['get','_vol'],0,3,mv,26];
+          const WC=()=>['interpolate',['linear'],['get','_vol'],0,0.3,mv,1.8];
+
+          map.addSource('flow',{type:'geojson',data:buildGeo()});
+          map.addLayer({id:'flow-glow',type:'line',source:'flow',layout:{'line-join':'round','line-cap':'round'},
+            paint:{'line-color':col,'line-width':WG(),'line-opacity':0.16,'line-blur':4}});
+          map.addLayer({id:'flow-line',type:'line',source:'flow',layout:{'line-join':'round','line-cap':'round'},
+            paint:{'line-color':col,'line-width':W(),'line-opacity':0.85}});
+          map.addLayer({id:'flow-center',type:'line',source:'flow',layout:{'line-join':'round','line-cap':'round'},
+            paint:{'line-color':'#fff','line-width':WC(),'line-opacity':0.3}});
+          map.addLayer({id:'flow-select',type:'line',source:'flow',layout:{'line-join':'round','line-cap':'round'},
+            paint:{'line-color':'#111827','line-width':['interpolate',['linear'],['get','_vol'],0,2.4,mv,18],'line-opacity':0.0},
+            filter:['==',['get','id'],'__none__']});
+
+          // Sensor points
+          map.addSource('flow-sensors',{type:'geojson',data:{type:'FeatureCollection',features:sensorPts}});
+          map.addLayer({id:'flow-sensor-halo',type:'circle',source:'flow-sensors',
+            paint:{'circle-radius':6,'circle-color':'#fff','circle-opacity':0.95,'circle-stroke-color':'#1e2a3a','circle-stroke-width':2}});
+          map.addLayer({id:'flow-sensor-label',type:'symbol',source:'flow-sensors',
+            layout:{'text-field':['get','name'],'text-size':11,'text-offset':[0,1.4],'text-anchor':'top',
+              'text-font':['Open Sans Semibold','Arial Unicode MS Bold']},
+            paint:{'text-color':'#1e2a3a','text-halo-color':'#fff','text-halo-width':1.5}});
+
+          function applyWidths(){mv=maxVol();
+            map.setPaintProperty('flow-glow','line-width',WG());
+            map.setPaintProperty('flow-line','line-width',W());
+            map.setPaintProperty('flow-center','line-width',WC());
+            map.setPaintProperty('flow-select','line-width',['interpolate',['linear'],['get','_vol'],0,2.4,mv,18]);}
+          function applyColor(){col=activeColor();
+            map.setPaintProperty('flow-glow','line-color',col);
+            map.setPaintProperty('flow-line','line-color',col);}
+
+          function refresh(){
+            map.getSource('flow').setData(buildGeo());
+            applyColor();applyWidths();
+            document.getElementById('flow-legend-swatch').style.background=col;
+            document.getElementById('flow-legend-text').textContent=`${chemLabel()} car-traversals (line thickness ∝ volume)`;
+            updateTrend();
+          }
+
+          // Hover popup — shows the selected commodity's count on the hovered segment
+          map.on('mousemove','flow-line',e=>{map.getCanvas().style.cursor='pointer';
+            const p=e.features[0].properties;const vol=Number(p._vol);
+            const period=mon<0?'full year':months[mon];
+            popup.setLngLat(e.lngLat).setHTML(
+              `<div style="font-weight:600;color:var(--heading);margin-bottom:2px;">${p.sensor_a} ↔ ${p.sensor_b}</div>`
               +`<div style="font-size:12px;color:var(--text-dim);margin-bottom:4px;">${p.subdivision}</div>`
-              +`<div style="font-size:13px;color:var(--hazmat);font-weight:700;margin-bottom:4px;">${Number(p.value).toLocaleString()} hazmat cars</div>`
-              +`<div style="font-size:12px;color:var(--text-muted);line-height:1.6;">`
-              +`NB: ${Number(p.nb).toLocaleString()} · SB: ${Number(p.sb).toLocaleString()}<br>`
-              +`EB: ${Number(p.eb).toLocaleString()} · WB: ${Number(p.wb).toLocaleString()}</div>`)
-            .addTo(map);
+              +`<div style="font-size:13px;font-weight:700;margin-bottom:2px;color:${col};">${vol.toLocaleString()} ${chemLabel()} traversals</div>`
+              +`<div style="font-size:11px;color:var(--text-muted);">${period} · click to chart trend</div>`).addTo(map);});
+          map.on('mouseleave','flow-line',()=>{map.getCanvas().style.cursor='';popup.remove();});
+
+          // Click to select a segment for the trend chart
+          map.on('click','flow-line',e=>{
+            const id=e.features[0].properties.id;
+            selSeg=segLines.find(f=>f.properties.id===id)||null;
+            map.setFilter('flow-select',['==',['get','id'],id]);
+            map.setPaintProperty('flow-select','line-opacity',0.9);
+            document.getElementById('flow-trend-reset').style.display='inline-block';
+            updateTrend();
+          });
+
+          // Dropdown handlers
+          chemSel.addEventListener('change',()=>{chem=chemSel.value;refresh();});
+          routeSel.addEventListener('change',()=>{route=routeSel.value;
+            if(selSeg&&route!=='ALL'&&selSeg.properties.subdivision!==route)resetSel();refresh();});
+          monthSel.addEventListener('change',()=>{mon=parseInt(monthSel.value);refresh();});
+          document.getElementById('flow-trend-reset').addEventListener('click',()=>{resetSel();updateTrend();});
+          function resetSel(){selSeg=null;map.setFilter('flow-select',['==',['get','id'],'__none__']);
+            map.setPaintProperty('flow-select','line-opacity',0.0);
+            document.getElementById('flow-trend-reset').style.display='none';}
+
+          // ── Trend chart ──
+          const trendCtx=document.getElementById('flow-trend-chart').getContext('2d');
+          let trend=new Chart(trendCtx,{type:'line',
+            data:{labels:months,datasets:[{data:Array(12).fill(0),borderColor:DEFAULT_COLOR,
+              backgroundColor:DEFAULT_COLOR+'22',borderWidth:2,fill:true,tension:0.3,pointRadius:3,pointHoverRadius:5}]},
+            options:{responsive:true,maintainAspectRatio:true,
+              plugins:{legend:{display:false},tooltip:{...ttOpts(),callbacks:{label:c=>` ${c.raw.toLocaleString()} traversals`}}},
+              scales:{x:{grid:{color:'rgba(0,0,0,0.06)'}},y:{beginAtZero:true,grid:{color:'rgba(0,0,0,0.06)'},ticks:{callback:v=>v.toLocaleString()}}}}});
+          function updateTrend(){
+            let data,subtitle;
+            if(selSeg){data=segMonthly(selSeg);subtitle=`${selSeg.properties.sensor_a} ↔ ${selSeg.properties.sensor_b}`;}
+            else{data=Array(12).fill(0);visibleSegs().forEach(f=>{const m=segMonthly(f);for(let i=0;i<12;i++)data[i]+=m[i];});
+              subtitle=route==='ALL'?'Entire Network':route;}
+            document.getElementById('flow-trend-title').textContent=`Monthly Trend — ${chemLabel()} · ${subtitle}`;
+            trend.data.datasets[0].data=data;
+            trend.data.datasets[0].borderColor=col;
+            trend.data.datasets[0].backgroundColor=col+'22';
+            trend.update();
+          }
+          updateTrend();
         });
-        map.on('mouseleave','hazmat-circles',()=>{map.getCanvas().style.cursor='';popup.remove();});
       });
-    });
+    }).catch(err=>console.error('Hazmat flow geo not loaded:',err));
 
     // ── Monthly stacked bar by hazard class ──
     new Chart(document.getElementById('hazmat-monthly-chart').getContext('2d'),{
