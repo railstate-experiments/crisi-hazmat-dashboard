@@ -501,77 +501,140 @@
 <!-- ═══════════════════════════════════════════════════════════ -->
 <div class="tab-panel active" id="tab-overview">
   <div class="commodity-header">
-    <div class="commodity-name">Rail Network Intelligence</div>
-    <div class="commodity-subtitle">Independent · Measured · Real-Time</div>
+    <div class="commodity-name">State Rail Safety Research &amp; Planning</div>
+    <div class="commodity-subtitle">A CRISI project from the <a href="https://www.udel.edu" target="_blank" rel="noopener" style="color:var(--rs);text-decoration:none;border-bottom:1px solid currentColor;">University of Delaware</a> and RailState</div>
   </div>
 
   <div class="charts-grid">
-    <!-- Intro -->
+    <!-- About the Project -->
     <div class="chart-section">
-      <div style="padding:36px 40px;">
-        <div style="font-size:16px;color:var(--text);line-height:2;max-width:960px;">
-          RailState operates the largest independent rail sensor network in North America. Our trackside sensors photograph every train that passes, capturing car-level detail — equipment type, commodity markings, hazmat placards, container ownership, railroad, and direction of travel — across hundreds of strategic locations.
+      <div style="padding:36px 40px 8px;">
+        <div style="display:inline-block;font-family:var(--font-head);font-size:11px;font-weight:600;letter-spacing:0.16em;text-transform:uppercase;color:var(--rs);margin-bottom:10px;">About the Project</div>
+        <div class="chart-section-title" style="margin-bottom:18px;font-size:28px;line-height:1.25;max-width:1000px;">An independent, continuous view of hazardous materials moving by rail.</div>
+        <div style="font-size:16px;color:var(--text);line-height:1.85;max-width:1000px;margin-bottom:16px;">
+          The CRISI Hazmat project, led by the <a href="https://www.udel.edu" target="_blank" rel="noopener" style="color:var(--rs);text-decoration:none;border-bottom:1px solid currentColor;">University of Delaware</a> and RailState, LLC, is deploying a network of <strong>trackside sensors across six participating states</strong> to capture every train movement &mdash; including the specific UN placard on every tank car. The result is the first continuous, independent measurement of hazardous materials rail traffic &mdash; what is moving, in what volumes, along which corridors, and in which direction &mdash; at a level of detail communities have never previously had.
         </div>
-        <div style="margin-top:24px;font-size:15px;color:var(--text-muted);line-height:1.95;max-width:960px;">
-          Unlike government statistics, industry surveys, or modeled estimates, <span style="color:var(--rs);font-weight:600;">RailState data is directly measured from photographic evidence</span>. Every data point in this dashboard traces back to a physical observation of a real rail car at a known location and time. We are not an aggregator, we do not model or estimate volumes, and we are not affiliated with any railroad, shipper, or trading firm. This independence is what makes RailState data uniquely valuable for benchmarking, validation, and forward-looking intelligence.
+        <div style="font-size:15px;color:var(--text-muted);line-height:1.85;max-width:1000px;margin-bottom:8px;">
+          Each participating State DOT and emergency management agency works directly with the <a href="https://www.udel.edu" target="_blank" rel="noopener" style="color:var(--rs);text-decoration:none;border-bottom:1px solid currentColor;">University of Delaware</a> to put this data to use &mdash; coordinating with first responders, overlaying hazmat flow against population density and environmentally sensitive areas, and grounding safety and infrastructure planning in observed data. Participants also gain access to all RailState data for their state, extending its value beyond hazmat. Data access, custom analysis, training, and ongoing support continue throughout the <strong>three-year grant period</strong>.
         </div>
-        <div style="margin-top:28px;display:flex;gap:20px;flex-wrap:wrap;">
-          <!-- Independent -->
-          <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:24px 28px;min-width:180px;flex:1 1 180px;text-align:center;">
-            <div style="width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#0452BE,#0670de);margin:0 auto 14px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(4,82,190,0.2);">
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
-            </div>
-            <div style="font-family:var(--font-head);font-weight:700;font-size:16px;color:var(--heading);margin-bottom:8px;">Independent</div>
-            <div style="font-family:var(--font-head);font-weight:700;font-size:20px;color:var(--rs);margin-bottom:10px;">Zero Affiliation</div>
-            <div style="font-size:13px;color:var(--text-muted);line-height:1.6;">Not affiliated with any railroad, shipper, or trading firm. Directly measured from photographic evidence — not modeled or estimated.</div>
+      </div>
+
+      <!-- Goals / Deliver / Benefits -->
+      <div style="padding:8px 40px 28px;">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px;">
+          <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:22px 24px;border-top:3px solid var(--rs);">
+            <div style="font-family:var(--font-head);font-weight:700;font-size:13px;letter-spacing:0.10em;text-transform:uppercase;color:var(--rs-blue);margin-bottom:14px;">Project Goals</div>
+            <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:10px;font-size:14px;color:var(--text);line-height:1.55;">
+              <li style="display:flex;gap:10px;"><span style="color:var(--rs);font-weight:800;">&rsaquo;</span><span>Establish independent, continuous measurement of hazardous materials rail traffic across participating states</span></li>
+              <li style="display:flex;gap:10px;"><span style="color:var(--rs);font-weight:800;">&rsaquo;</span><span>Replace limited, lagging data with car-level, UN-placard-level detail for emergency planning and risk assessment</span></li>
+              <li style="display:flex;gap:10px;"><span style="color:var(--rs);font-weight:800;">&rsaquo;</span><span>Give first responders and state agencies an accurate picture of exactly what moves through their jurisdictions</span></li>
+              <li style="display:flex;gap:10px;"><span style="color:var(--rs);font-weight:800;">&rsaquo;</span><span>Overlay hazmat flow against population density and environmentally sensitive areas to surface the highest-risk corridors</span></li>
+              <li style="display:flex;gap:10px;"><span style="color:var(--rs);font-weight:800;">&rsaquo;</span><span>Ground state rail-safety and infrastructure planning in observed movements rather than estimates</span></li>
+            </ul>
           </div>
-          <!-- Low Data Latency -->
-          <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:24px 28px;min-width:180px;flex:1 1 180px;text-align:center;">
-            <div style="width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#f59e0b,#d97706);margin:0 auto 14px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(245,158,11,0.25);">
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-            </div>
-            <div style="font-family:var(--font-head);font-weight:700;font-size:16px;color:var(--heading);margin-bottom:8px;">Low Data Latency</div>
-            <div style="font-family:var(--font-head);font-weight:800;font-size:32px;color:var(--rs);margin-bottom:4px;line-height:1;">&lt; 30 min</div>
-            <div style="font-size:12px;color:var(--text-dim);margin-bottom:10px;">from sensor to customer</div>
-            <div style="font-size:13px;color:var(--text-muted);line-height:1.6;">Sensor data is captured, processed, and delivered in under 30 minutes from the time a train passes — weeks ahead of government statistics.</div>
+          <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:22px 24px;border-top:3px solid var(--rs-blue);">
+            <div style="font-family:var(--font-head);font-weight:700;font-size:13px;letter-spacing:0.10em;text-transform:uppercase;color:var(--rs-blue);margin-bottom:14px;">What We Deliver</div>
+            <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:10px;font-size:14px;color:var(--text);line-height:1.55;">
+              <li style="display:flex;gap:10px;"><span style="color:var(--rs);font-weight:800;">&rsaquo;</span><span>Trackside sensor coverage of the key rail corridors in each participating state</span></li>
+              <li style="display:flex;gap:10px;"><span style="color:var(--rs);font-weight:800;">&rsaquo;</span><span>A custom analysis dashboard for each state, tailored to its corridors and commodities</span></li>
+              <li style="display:flex;gap:10px;"><span style="color:var(--rs);font-weight:800;">&rsaquo;</span><span>A mapping tool overlaying hazmat flow against population and sensitive areas, plus a preliminary findings report</span></li>
+            </ul>
           </div>
-          <!-- Granular -->
-          <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:24px 28px;min-width:180px;flex:1 1 180px;text-align:center;">
-            <div style="width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#80BC2C,#5d9a10);margin:0 auto 14px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(128,188,44,0.25);">
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/><path d="M11 8v6"/><path d="M8 11h6"/></svg>
-            </div>
-            <div style="font-family:var(--font-head);font-weight:700;font-size:16px;color:var(--heading);margin-bottom:8px;">Granular</div>
-            <div style="font-family:var(--font-head);font-weight:700;font-size:20px;color:var(--rs);margin-bottom:10px;">Car-Level Detail</div>
-            <div style="font-size:13px;color:var(--text-muted);line-height:1.6;">Every individual rail car is captured — equipment type, commodity markings, container ownership, hazmat placards, railroad, and direction of travel.</div>
+          <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:22px 24px;border-top:3px solid #F59E0B;">
+            <div style="font-family:var(--font-head);font-weight:700;font-size:13px;letter-spacing:0.10em;text-transform:uppercase;color:var(--rs-blue);margin-bottom:14px;">Benefits to States &amp; Responders</div>
+            <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:10px;font-size:14px;color:var(--text);line-height:1.55;">
+              <li style="display:flex;gap:10px;"><span style="color:var(--rs);font-weight:800;">&rsaquo;</span><span>An actionable, near-real-time picture of hazardous materials moving through their jurisdictions</span></li>
+              <li style="display:flex;gap:10px;"><span style="color:var(--rs);font-weight:800;">&rsaquo;</span><span>Objective data measured from photographic evidence, independent of railroad reporting</span></li>
+              <li style="display:flex;gap:10px;"><span style="color:var(--rs);font-weight:800;">&rsaquo;</span><span>Full access to all RailState data covering each participant&rsquo;s state</span></li>
+              <li style="display:flex;gap:10px;"><span style="color:var(--rs);font-weight:800;">&rsaquo;</span><span>An evidence base for emergency planning, training, and infrastructure prioritization</span></li>
+            </ul>
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- CRISI Project Overview -->
-    <div class="chart-section">
-      <div style="padding:36px 40px;">
-        <div class="chart-section-title" style="margin-bottom:6px;font-size:22px;">About the CRISI Project</div>
-        <div style="font-size:15px;color:var(--text);line-height:1.95;max-width:960px;margin-bottom:24px;">
-          The CRISI Hazmat project, led by the University of Delaware and RailState, LLC, will deploy a network of sensors along rail lines in six participating states to collect near-real-time data on hazardous materials traffic — including specific UN numbers on every tank car. This detailed information will greatly expand on the limited data communities currently rely on, providing first responders and state agencies with a more complete and actionable picture of exactly what is moving through their jurisdictions.
+      <!-- Project Steps -->
+      <div style="padding:8px 40px 28px;">
+        <div class="chart-section-title" style="margin-bottom:6px;font-size:20px;">Project Steps</div>
+        <div style="font-size:14px;color:var(--text-muted);margin-bottom:20px;">Each participating state follows the same five-stage workflow over the three-year grant.</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px;">
+          <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px 22px;">
+            <div style="font-family:var(--font-mono);font-weight:700;font-size:12px;color:var(--rs);letter-spacing:0.08em;margin-bottom:10px;">STEP 01</div>
+            <div style="font-family:var(--font-head);font-weight:700;font-size:15px;color:var(--heading);margin-bottom:8px;">Sensor Deployment</div>
+            <div style="font-size:13px;color:var(--text-muted);line-height:1.6;">RailState installs trackside sensors along the key rail corridors in each participating state.</div>
+          </div>
+          <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px 22px;">
+            <div style="font-family:var(--font-mono);font-weight:700;font-size:12px;color:var(--rs);letter-spacing:0.08em;margin-bottom:10px;">STEP 02</div>
+            <div style="font-family:var(--font-head);font-weight:700;font-size:15px;color:var(--heading);margin-bottom:8px;">Continuous Data Capture</div>
+            <div style="font-size:13px;color:var(--text-muted);line-height:1.6;">Sensors run 24/7, capturing every train at car-level detail &mdash; including UN placards &mdash; and delivering structured data within 30 minutes.</div>
+          </div>
+          <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px 22px;">
+            <div style="font-family:var(--font-mono);font-weight:700;font-size:12px;color:var(--rs);letter-spacing:0.08em;margin-bottom:10px;">STEP 03</div>
+            <div style="font-family:var(--font-head);font-weight:700;font-size:15px;color:var(--heading);margin-bottom:8px;">Custom Dashboard</div>
+            <div style="font-size:13px;color:var(--text-muted);line-height:1.6;">A state-specific dashboard is built around the corridors, commodities, and communities unique to each participant.</div>
+          </div>
+          <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px 22px;">
+            <div style="font-family:var(--font-mono);font-weight:700;font-size:12px;color:var(--rs);letter-spacing:0.08em;margin-bottom:10px;">STEP 04</div>
+            <div style="font-family:var(--font-head);font-weight:700;font-size:15px;color:var(--heading);margin-bottom:8px;">Mapping &amp; Findings</div>
+            <div style="font-size:13px;color:var(--text-muted);line-height:1.6;">Hazmat flows are overlaid against population density and sensitive areas, with a report identifying risk corridors and planning priorities.</div>
+          </div>
+          <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px 22px;">
+            <div style="font-family:var(--font-mono);font-weight:700;font-size:12px;color:var(--rs);letter-spacing:0.08em;margin-bottom:10px;">STEP 05</div>
+            <div style="font-family:var(--font-head);font-weight:700;font-size:15px;color:var(--heading);margin-bottom:8px;">Training &amp; Support</div>
+            <div style="font-size:13px;color:var(--text-muted);line-height:1.6;">State DOT and emergency-management analysts receive training, full data access, and ongoing support throughout the grant.</div>
+          </div>
         </div>
-        <div style="font-size:14px;color:var(--text-muted);line-height:1.8;max-width:960px;margin-bottom:28px;">
-          Each participating State DOT and emergency management agency will work with the University of Delaware to deliver this data to local first responders, supported by training programs and a mapping tool that overlays hazmat flow against population density and environmentally sensitive areas. States will also have access to all RailState data for their state, extending its value beyond hazmat and safety planning. Data access, support, and training will continue throughout the three-year grant period.
+      </div>
+
+      <!-- Applications: What States Can Do With the Data -->
+      <div style="padding:8px 40px 36px;">
+        <div class="chart-section-title" style="margin-bottom:6px;font-size:20px;">What Participating States Can Do With the Data</div>
+        <div style="font-size:14px;color:var(--text-muted);margin-bottom:20px;max-width:900px;">The dashboards and underlying data support a range of safety, emergency-planning, and infrastructure applications.</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px;">
+          <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:18px 22px;">
+            <div style="font-family:var(--font-head);font-weight:700;font-size:14px;color:var(--rs-blue);margin-bottom:6px;">Strengthen Emergency Response</div>
+            <div style="font-size:13px;color:var(--text-muted);line-height:1.6;">UN-placard-level hazmat data lets first responders and local emergency planning committees know what is actually moving through their jurisdictions and prepare accordingly.</div>
+          </div>
+          <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:18px 22px;">
+            <div style="font-family:var(--font-head);font-weight:700;font-size:14px;color:var(--rs-blue);margin-bottom:6px;">Assess Community Risk</div>
+            <div style="font-size:13px;color:var(--text-muted);line-height:1.6;">Overlay hazmat flow against population density and environmentally sensitive areas to identify and prioritize the highest-risk corridors and crossings.</div>
+          </div>
+          <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:18px 22px;">
+            <div style="font-family:var(--font-head);font-weight:700;font-size:14px;color:var(--rs-blue);margin-bottom:6px;">Inform State Rail Planning</div>
+            <div style="font-size:13px;color:var(--text-muted);line-height:1.6;">Volume, commodity mix, train type, and corridor data feed directly into state rail plans and long-range safety investment decisions.</div>
+          </div>
+          <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:18px 22px;">
+            <div style="font-family:var(--font-head);font-weight:700;font-size:14px;color:var(--rs-blue);margin-bottom:6px;">Prioritize Crossing &amp; Infrastructure Safety</div>
+            <div style="font-size:13px;color:var(--text-muted);line-height:1.6;">Train length and frequency estimates support grade-crossing blockage analysis and the prioritization of separation and safety projects.</div>
+          </div>
+          <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:18px 22px;">
+            <div style="font-family:var(--font-head);font-weight:700;font-size:14px;color:var(--rs-blue);margin-bottom:6px;">Engage Railroads with Independent Data</div>
+            <div style="font-size:13px;color:var(--text-muted);line-height:1.6;">Work from objective, measured movements rather than railroad-reported or modeled figures when coordinating on safety and routing.</div>
+          </div>
+          <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:18px 22px;">
+            <div style="font-family:var(--font-head);font-weight:700;font-size:14px;color:var(--rs-blue);margin-bottom:6px;">Support Incident Review &amp; Drills</div>
+            <div style="font-size:13px;color:var(--text-muted);line-height:1.6;">A continuous record of what moved, when, and where provides an evidence base for after-action review, preparedness exercises, and risk modeling.</div>
+          </div>
         </div>
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;">
-          <div class="overview-nav-card" onclick="switchTab('hazmat')" style="cursor:pointer;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:18px 22px;transition:border-color 0.2s;">
+      </div>
+
+      <!-- Tab Navigation -->
+      <div style="padding:8px 40px 36px;">
+        <div class="chart-section-title" style="margin-bottom:6px;font-size:20px;">Explore the Data &mdash; Oregon Demo</div>
+        <div style="font-size:14px;color:var(--text-muted);margin-bottom:20px;">This dashboard is the working State of Oregon demonstration. Each tab applies the underlying RailState data to a specific rail-safety or planning question.</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;">
+          <div class="overview-nav-card" onclick="switchTab('hazmat')" style="cursor:pointer;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:18px 22px;transition:border-color 0.2s;">
             <div style="font-family:var(--font-head);font-weight:700;font-size:14px;color:var(--heading);margin-bottom:4px;">Hazardous Material Flows</div>
-            <div style="font-size:13px;color:var(--text-muted);line-height:1.6;">Real-time hazmat car volumes by UN class, corridor, and railroad — enabling emergency response planning and risk assessment at the state and local level.</div>
+            <div style="font-size:13px;color:var(--text-muted);line-height:1.6;">Hazmat car flows on the actual rail segments, filterable by route and commodity, with per-segment monthly trends &mdash; for emergency planning and risk assessment.</div>
           </div>
-          <div class="overview-nav-card" onclick="switchTab('corridor')" style="cursor:pointer;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:18px 22px;transition:border-color 0.2s;">
+          <div class="overview-nav-card" onclick="switchTab('corridor')" style="cursor:pointer;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:18px 22px;transition:border-color 0.2s;">
             <div style="font-family:var(--font-head);font-weight:700;font-size:14px;color:var(--heading);margin-bottom:4px;">Corridor Analysis</div>
-            <div style="font-size:13px;color:var(--text-muted);line-height:1.6;">Detailed breakdown of the UP Brooklyn Subdivision through Oregon's Willamette Valley — traffic patterns, hazmat flows, train spacing, and operational characteristics.</div>
+            <div style="font-size:13px;color:var(--text-muted);line-height:1.6;">Detailed breakdown of the UP Brooklyn Subdivision through Oregon&rsquo;s Willamette Valley &mdash; traffic patterns, hazmat flows, train spacing, and operational characteristics.</div>
           </div>
-          <div class="overview-nav-card" onclick="switchTab('trainlength')" style="cursor:pointer;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:18px 22px;transition:border-color 0.2s;">
+          <div class="overview-nav-card" onclick="switchTab('trainlength')" style="cursor:pointer;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:18px 22px;transition:border-color 0.2s;">
             <div style="font-family:var(--font-head);font-weight:700;font-size:14px;color:var(--heading);margin-bottom:4px;">Train Length Analysis</div>
             <div style="font-size:13px;color:var(--text-muted);line-height:1.6;">Distribution of estimated train lengths in feet by type, with implications for grade crossing blockage duration and infrastructure planning.</div>
           </div>
-          <div class="overview-nav-card" onclick="switchTab('planning')" style="cursor:pointer;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:18px 22px;transition:border-color 0.2s;">
+          <div class="overview-nav-card" onclick="switchTab('planning')" style="cursor:pointer;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:18px 22px;transition:border-color 0.2s;">
             <div style="font-family:var(--font-head);font-weight:700;font-size:14px;color:var(--heading);margin-bottom:4px;">State Rail Planning</div>
             <div style="font-size:13px;color:var(--text-muted);line-height:1.6;">Rail traffic volumes, train type mix, travel times, headway analysis, and temporal patterns to support state rail plan development.</div>
           </div>
@@ -579,6 +642,46 @@
       </div>
     </div>
 
+    <!-- About RailState -->
+    <div class="chart-section">
+      <div style="padding:36px 40px;">
+        <div style="display:inline-block;font-family:var(--font-head);font-size:11px;font-weight:600;letter-spacing:0.16em;text-transform:uppercase;color:var(--rs);margin-bottom:10px;">About RailState</div>
+        <div class="chart-section-title" style="margin-bottom:18px;font-size:24px;line-height:1.25;">The largest independent rail sensor network in North America.</div>
+        <div style="font-size:16px;color:var(--text);line-height:2;max-width:960px;">
+          RailState operates the largest independent rail sensor network in North America. Our trackside sensors photograph every train that passes, capturing car-level detail &mdash; equipment type, commodity markings, hazmat placards, container ownership, railroad, and direction of travel &mdash; across hundreds of strategic locations.
+        </div>
+        <div style="margin-top:24px;font-size:15px;color:var(--text-muted);line-height:1.95;max-width:960px;">
+          Unlike government statistics, industry surveys, or modeled estimates, <span style="color:var(--rs);font-weight:600;">RailState data is directly measured from photographic evidence</span>. Every data point in this dashboard traces back to a physical observation of a real rail car at a known location and time. We are not an aggregator, we do not model or estimate volumes, and we are not affiliated with any railroad, shipper, or trading firm. This independence is what makes RailState data uniquely valuable for benchmarking, validation, and forward-looking intelligence.
+        </div>
+        <div style="margin-top:28px;display:flex;gap:20px;flex-wrap:wrap;">
+          <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:24px 28px;min-width:180px;flex:1 1 180px;text-align:center;">
+            <div style="width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#0452BE,#0670de);margin:0 auto 14px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(4,82,190,0.2);">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
+            </div>
+            <div style="font-family:var(--font-head);font-weight:700;font-size:16px;color:var(--heading);margin-bottom:8px;">Independent</div>
+            <div style="font-family:var(--font-head);font-weight:700;font-size:20px;color:var(--rs);margin-bottom:10px;">Zero Affiliation</div>
+            <div style="font-size:13px;color:var(--text-muted);line-height:1.6;">Not affiliated with any railroad, shipper, or trading firm. Directly measured from photographic evidence &mdash; not modeled or estimated.</div>
+          </div>
+          <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:24px 28px;min-width:180px;flex:1 1 180px;text-align:center;">
+            <div style="width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#f59e0b,#d97706);margin:0 auto 14px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(245,158,11,0.25);">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            </div>
+            <div style="font-family:var(--font-head);font-weight:700;font-size:16px;color:var(--heading);margin-bottom:8px;">Low Data Latency</div>
+            <div style="font-family:var(--font-head);font-weight:800;font-size:32px;color:var(--rs);margin-bottom:4px;line-height:1;">&lt; 30 min</div>
+            <div style="font-size:12px;color:var(--text-dim);margin-bottom:10px;">from sensor to customer</div>
+            <div style="font-size:13px;color:var(--text-muted);line-height:1.6;">Sensor data is captured, processed, and delivered in under 30 minutes from the time a train passes &mdash; weeks ahead of government statistics.</div>
+          </div>
+          <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:24px 28px;min-width:180px;flex:1 1 180px;text-align:center;">
+            <div style="width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#80BC2C,#5d9a10);margin:0 auto 14px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(128,188,44,0.25);">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/><path d="M11 8v6"/><path d="M8 11h6"/></svg>
+            </div>
+            <div style="font-family:var(--font-head);font-weight:700;font-size:16px;color:var(--heading);margin-bottom:8px;">Granular</div>
+            <div style="font-family:var(--font-head);font-weight:700;font-size:20px;color:var(--rs);margin-bottom:10px;">Car-Level Detail</div>
+            <div style="font-size:13px;color:var(--text-muted);line-height:1.6;">Every individual rail car is captured &mdash; equipment type, commodity markings, container ownership, hazmat placards, railroad, and direction of travel.</div>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <!-- How It Works -->
     <div class="chart-section">
