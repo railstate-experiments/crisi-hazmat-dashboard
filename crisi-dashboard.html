@@ -6,20 +6,20 @@
 <title>RailState CRISI Project - State Rail Safety Research and Planning</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <link href="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.css" rel="stylesheet">
 <script src="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.js"></script>
 <style>
   :root {
-    --bg: #F5F6F8;
+    --bg: #F5F5F5;
     --surface: #ffffff;
-    --surface2: #EBEEF3;
-    --border: #C5CDD8;
+    --surface2: #F9FAFB;
+    --border: #E0E7F0;
     --rs: #80BC2C;
     --rs-dim: rgba(128,188,44,0.12);
     --rs-glow: rgba(128,188,44,0.30);
-    --rs-blue: #0452BE;
+    --rs-blue: #083370;
     --gov: #6366f1;
     --gov-dim: rgba(99,102,241,0.10);
     --gap: #c42b2b;
@@ -28,14 +28,15 @@
     --safety: #dc2626;
     --safety-dim: rgba(220,38,38,0.08);
     --text: #2c3345;
-    --text-muted: #4a5468;
-    --text-dim: #737d8e;
-    --heading: #1e2a3a;
-    --header-bg: #0a1628;
-    --font-head: 'Poppins', sans-serif;
-    --font-body: 'Inter', sans-serif;
-    --shadow-card: 0 1px 4px rgba(0,0,0,0.07), 0 0 1px rgba(0,0,0,0.10);
-    --shadow-card-hover: 0 4px 16px rgba(0,0,0,0.10), 0 0 1px rgba(0,0,0,0.12);
+    --text-muted: #6B7A8D;
+    --text-dim: #8A95A6;
+    --heading: #083370;
+    --header-bg: #083370;
+    --font-head: 'Plus Jakarta Sans', sans-serif;
+    --font-body: 'Plus Jakarta Sans', sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+    --shadow-card: 0 1px 4px rgba(8,51,112,0.06), 0 0 1px rgba(8,51,112,0.08);
+    --shadow-card-hover: 0 4px 16px rgba(8,51,112,0.10), 0 0 1px rgba(8,51,112,0.12);
   }
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -463,11 +464,17 @@
 <body>
 
 <header>
-  <div class="logo-block">
-    <a href="#" onclick="switchTab('overview');return false;" style="text-decoration:none;">
-      <img src="RailState_Logo_White.svg" alt="RailState" style="height:36px;">
-    </a>
-    <div class="logo-tagline">Rail Network Intelligence</div>
+  <div style="display:flex;align-items:center;gap:18px;">
+    <div class="logo-block">
+      <a href="#" onclick="switchTab('overview');return false;" style="text-decoration:none;">
+        <img src="RailState_Logo_White.svg" alt="RailState" style="height:36px;">
+      </a>
+      <div class="logo-tagline">Rail Network Intelligence</div>
+    </div>
+    <div style="width:1px;height:40px;background:rgba(255,255,255,0.22);"></div>
+    <div style="background:#fff;border-radius:7px;padding:6px 12px;display:flex;align-items:center;box-shadow:0 1px 3px rgba(0,0,0,0.18);">
+      <img src="udel_logo.svg" alt="University of Delaware" style="height:28px;display:block;">
+    </div>
   </div>
   <div class="header-meta">
     <div class="report-title">CRISI Project — State Rail Safety Research &amp; Planning</div>
