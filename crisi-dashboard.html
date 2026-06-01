@@ -494,6 +494,10 @@
   <button class="tab-btn" data-tab="planning" onclick="switchTab('planning')">
     <span class="tab-dot"></span> State Rail Planning
   </button>
+  <button class="tab-btn" data-tab="gradecrossings" onclick="switchTab('gradecrossings')">
+    <span class="tab-dot"></span> Grade Crossings
+  </button>
+
 </div>
 
 <!-- ═══════════════════════════════════════════════════════════ -->
@@ -1565,6 +1569,194 @@
 </div>
 
 
+<!-- ── BEGIN Grade Crossings tab (auto-injected) ── -->
+<div class="tab-panel" id="tab-gradecrossings">
+
+  <div class="commodity-header">
+    <div class="commodity-name">Grade Crossings — Salem, OR</div>
+    <div class="commodity-subtitle">UP Brooklyn Sub. · RailState sensor #258 · 12 named crossings on the downtown Salem line</div>
+
+    <div class="stat-row" id="gc-kpis">
+      <div class="stat-pill highlight">
+        <span class="stat-label">Total sightings</span>
+        <span class="stat-value" id="gc-kpi-total">--</span>
+        <span class="stat-sub" id="gc-kpi-range">all-history</span>
+      </div>
+      <div class="stat-pill">
+        <span class="stat-label">Trains / day (avg)</span>
+        <span class="stat-value" id="gc-kpi-perday">--</span>
+        <span class="stat-sub" id="gc-kpi-days">--</span>
+      </div>
+      <div class="stat-pill">
+        <span class="stat-label" id="gc-kpi-dir1-label">Direction 1</span>
+        <span class="stat-value" id="gc-kpi-dir1">--</span>
+        <span class="stat-sub" id="gc-kpi-dir1-pct">--</span>
+      </div>
+      <div class="stat-pill">
+        <span class="stat-label" id="gc-kpi-dir2-label">Direction 2</span>
+        <span class="stat-value" id="gc-kpi-dir2">--</span>
+        <span class="stat-sub" id="gc-kpi-dir2-pct">--</span>
+      </div>
+      <div class="stat-pill warning">
+        <span class="stat-label">Blocked time / day</span>
+        <span class="stat-value" id="gc-kpi-blockday">--</span>
+        <span class="stat-sub" id="gc-kpi-blockpct">--</span>
+      </div>
+      <div class="stat-pill warning">
+        <span class="stat-label">Blockages ≥ 10 min</span>
+        <span class="stat-value" id="gc-kpi-long">--</span>
+        <span class="stat-sub">FRA complaint threshold</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="charts-grid">
+
+    <!-- ── Map ── -->
+    <div class="chart-section">
+      <div class="chart-section-header">
+        <div>
+          <div class="chart-section-title">Sensor &amp; Named Grade Crossings</div>
+          <div class="chart-section-desc" id="gc-map-desc">
+            RailState sensor and named at-grade crossings along the line. All
+            crossings on the same line experience the same train sighting; the
+            sighting duration equals the crossing blockage duration.
+          </div>
+        </div>
+      </div>
+      <div class="chart-wrap" style="padding:0 18px 22px;">
+        <div id="gc-map" style="height:480px;border-radius:8px;border:1px solid var(--border);"></div>
+      </div>
+    </div>
+
+    <!-- ── Monthly volume ── -->
+    <div class="chart-section">
+      <div class="chart-section-header">
+        <div>
+          <div class="chart-section-title">Monthly Train Volume</div>
+          <div class="chart-section-desc">Trains sighted at the sensor per calendar month, split by direction.</div>
+        </div>
+      </div>
+      <div class="chart-wrap" style="height:300px;"><canvas id="gc-monthly"></canvas></div>
+    </div>
+
+    <!-- ── Hourly + DoW ── -->
+    <div class="chart-section">
+      <div class="chart-section-header">
+        <div>
+          <div class="chart-section-title">Time-of-Day &amp; Day-of-Week Profile</div>
+          <div class="chart-section-desc">Hour-of-day and day-of-week distributions of train sightings. Each sighting is also a crossing blockage.</div>
+        </div>
+      </div>
+      <div class="chart-wrap" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;padding:0 18px 22px;">
+        <div style="height:280px;"><canvas id="gc-hourly"></canvas></div>
+        <div style="height:280px;"><canvas id="gc-dow"></canvas></div>
+      </div>
+    </div>
+
+    <!-- ── Length + Duration ── -->
+    <div class="chart-section">
+      <div class="chart-section-header">
+        <div>
+          <div class="chart-section-title">Train Length &amp; Sighting Duration</div>
+          <div class="chart-section-desc">Length (feet) and blockage duration distributions per direction. Both directly drive how long a passing train occupies the crossing.</div>
+        </div>
+      </div>
+      <div class="chart-wrap" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;padding:0 18px 22px;">
+        <div style="height:280px;"><canvas id="gc-length"></canvas></div>
+        <div style="height:280px;"><canvas id="gc-duration"></canvas></div>
+      </div>
+    </div>
+
+    <!-- ── Per-direction stats table ── -->
+    <div class="chart-section">
+      <div class="chart-section-header">
+        <div>
+          <div class="chart-section-title">Per-Direction Summary</div>
+          <div class="chart-section-desc">Length, speed and blockage duration statistics for each direction of travel.</div>
+        </div>
+      </div>
+      <div style="padding:0 26px 22px;">
+        <table class="summary-table" id="gc-dir-table">
+          <thead><tr><th>Direction</th><th>Trains</th><th>Avg speed</th><th>Median length</th><th>P90 length</th><th>Median blockage</th><th>P90 blockage</th><th>Max blockage</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ── Train type ── -->
+    <div class="chart-section">
+      <div class="chart-section-header">
+        <div>
+          <div class="chart-section-title">Train Type Mix</div>
+          <div class="chart-section-desc">Breakdown of sightings by RailState-inferred train type.</div>
+        </div>
+      </div>
+      <div style="padding:0 26px 22px;">
+        <table class="summary-table" id="gc-type-table">
+          <thead><tr><th>Train type</th><th>Total</th><th>Direction 1</th><th>Direction 2</th><th>Share</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ── Heatmap ── -->
+    <div class="chart-section">
+      <div class="chart-section-header">
+        <div>
+          <div class="chart-section-title">Crossing-Blockage Risk by Hour &amp; Day of Week</div>
+          <div class="chart-section-desc">Cumulative blocked minutes per hour-of-week over the observation window. Darker / warmer cells = more cumulative exposure for road users.</div>
+        </div>
+      </div>
+      <div style="padding:0 26px 22px;">
+        <div id="gc-heatmap" style="overflow-x:auto;"></div>
+        <div style="display:flex;align-items:center;gap:10px;margin-top:12px;font-size:11px;color:var(--text-muted);">
+          <span>Less blocked time</span>
+          <span style="flex:0 0 200px;height:10px;border-radius:2px;background:linear-gradient(90deg,#E0E7F0,#80BC2C 40%,#F59E0B 75%,#DC2626);"></span>
+          <span>More blocked time</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Longest blockages ── -->
+    <div class="chart-section">
+      <div class="chart-section-header">
+        <div>
+          <div class="chart-section-title">Ten Longest Recorded Blockages</div>
+          <div class="chart-section-desc">A sighting duration of 10+ minutes meets the FRA blocked-crossing complaint threshold used by several states.</div>
+        </div>
+      </div>
+      <div style="padding:0 26px 22px;">
+        <table class="summary-table" id="gc-long-table">
+          <thead><tr><th>When</th><th>Direction</th><th>Train type</th><th>Duration</th><th>Length</th><th>Avg speed</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ── Per-crossing table ── -->
+    <div class="chart-section">
+      <div class="chart-section-header">
+        <div>
+          <div class="chart-section-title">Named Crossings on This Line</div>
+          <div class="chart-section-desc">All trains that pass the sensor block each crossing for the same length of time (length / speed). Approach time differs by distance from the sensor.</div>
+        </div>
+      </div>
+      <div style="padding:0 26px 22px;">
+        <table class="summary-table" id="gc-crossings-table">
+          <thead><tr><th>Crossing</th><th>Coordinates</th><th>Distance from sensor</th></tr></thead>
+          <tbody></tbody>
+        </table>
+        <div style="margin-top:12px;font-size:12px;color:var(--text-muted);">
+          <em>Note: crossing coordinates are approximate and intended to anchor the marker on the rail line; fine-tune as needed.</em>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+<!-- ── END Grade Crossings tab (auto-injected) ── -->
+
 <footer>
   <div class="footer-left">
     RailState CRISI Project — State Rail Safety Research and Planning<br>
@@ -2390,6 +2582,324 @@ initCharts.corridor = () => {
 
 
 // Initialize overview tab on load
+/* ── BEGIN initCharts.gradecrossings (auto-injected) ── */
+initCharts.gradecrossings = function() {
+    const DOW_LABELS = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+    const RAILROAD_COLORS = {
+        BNSF:'#FF7F11', UP:'#E1BC29', CSXT:'#1F6DAD', NS:'#3F3B3F',
+        CN:'#B80000', CPKC:'#2E8A59', CPRS:'#2E8A59', KCS:'#2E8A59',
+        AMTK:'#0452BE', VIA:'#0EA5E9'
+    };
+    const RAIL_DEFAULT = '#94A3B8';
+    const RAIL_SOURCES = [
+        { id:'gcRail',  url:'mapbox://devoerailstate.cvm6ll9k', sourceLayer:'North_American_Rail_Network_Lines' },
+        { id:'gcRail2', url:'mapbox://devoerailstate.23t98xmy', sourceLayer:'NTAD' }
+    ];
+
+    function fmtInt(n) { return n==null?'--':Math.round(n).toLocaleString(); }
+    function fmtSec(s) {
+        if (s==null) return '--';
+        if (s>=60) { const m=Math.floor(s/60), r=Math.round(s-m*60); return m+'m '+String(r).padStart(2,'0')+'s'; }
+        return s.toFixed(1)+'s';
+    }
+    function fmtMin(s) { return s==null?'--':(s/60).toFixed(1)+' min'; }
+    function fmtPct(n,d,digits) { if(!d) return '0%'; return (n*100.0/d).toFixed(digits==null?1:digits)+'%'; }
+    function haversine(a, b) {
+        const R=6371000;
+        const toRad=x=>x*Math.PI/180;
+        const dLat=toRad(b[0]-a[0]), dLng=toRad(b[1]-a[1]);
+        const lat1=toRad(a[0]), lat2=toRad(b[0]);
+        const x=Math.sin(dLat/2)**2 + Math.cos(lat1)*Math.cos(lat2)*Math.sin(dLng/2)**2;
+        return 2*R*Math.asin(Math.sqrt(x));
+    }
+
+    fetch('data/grade_crossings_salem.json?v=' + (typeof DATA_VERSION!=='undefined'?DATA_VERSION:Date.now()))
+        .then(r => r.json())
+        .then(D => render(D))
+        .catch(err => {
+            const el = document.getElementById('gc-map');
+            if (el) el.innerHTML = '<div style="padding:24px;color:#b91c1c;">Failed to load grade-crossings data: ' + err + '</div>';
+        });
+
+    function render(D) {
+        const s = D.sensor, t = D.totals, b = D.blockage;
+        const crossings = D.crossings || [];
+
+        // ── Pick the two directions that actually have data ──
+        const dirCounts = { Westbound: t.wb||0, Eastbound: t.eb||0, Northbound: t.nb||0, Southbound: t.sb||0 };
+        const dirs = Object.entries(dirCounts).filter(([k,v]) => v>0).sort((a,bb)=>bb[1]-a[1]).map(x=>x[0]);
+        const dir1 = dirs[0] || 'Westbound';
+        const dir2 = dirs[1] || 'Eastbound';
+        const dirColor = { Westbound:'#80BC2C', Eastbound:'#083370', Northbound:'#80BC2C', Southbound:'#083370' };
+
+        // ── KPIs ──
+        const first = t.first ? new Date(t.first) : null;
+        const last  = t.last  ? new Date(t.last)  : null;
+        const span  = first && last ? first.toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'}) + ' – ' + last.toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'}) : '--';
+        const perDay = t.active_days ? (t.n / t.active_days) : 0;
+        const blockShare = b.avg_block_per_day_sec / 864.0; // = sec / 86400 * 100
+
+        document.getElementById('gc-kpi-total').textContent = fmtInt(t.n);
+        document.getElementById('gc-kpi-range').textContent = span;
+        document.getElementById('gc-kpi-perday').textContent = perDay.toFixed(1);
+        document.getElementById('gc-kpi-days').textContent = t.active_days + ' days observed';
+        document.getElementById('gc-kpi-dir1-label').textContent = dir1;
+        document.getElementById('gc-kpi-dir1').textContent = fmtInt(dirCounts[dir1]);
+        document.getElementById('gc-kpi-dir1-pct').textContent = fmtPct(dirCounts[dir1], t.n);
+        document.getElementById('gc-kpi-dir2-label').textContent = dir2;
+        document.getElementById('gc-kpi-dir2').textContent = fmtInt(dirCounts[dir2]);
+        document.getElementById('gc-kpi-dir2-pct').textContent = fmtPct(dirCounts[dir2], t.n);
+        document.getElementById('gc-kpi-blockday').textContent = fmtMin(b.avg_block_per_day_sec);
+        document.getElementById('gc-kpi-blockpct').textContent = blockShare.toFixed(2) + '% of day';
+        document.getElementById('gc-kpi-long').textContent = fmtInt(b.long_n);
+
+        document.getElementById('gc-map-desc').innerHTML =
+            'RailState sensor <strong>#' + s.id + '</strong> on the <strong>' + (s.railways || '--') +
+            '</strong>, plus <strong>' + crossings.length + '</strong> named at-grade crossings. ' +
+            'Trains passing the sensor block every crossing on the line for ~length/speed seconds; ' +
+            'the same hour-of-day / day-of-week pattern applies to each crossing with a small time offset.';
+
+        // ── Map ──
+        mapboxgl.accessToken = (typeof MAPBOX_TOKEN!=='undefined') ? MAPBOX_TOKEN
+            : 'pk.eyJ1IjoiZGV2b2VyYWlsc3RhdGUiLCJhIjoiY2wxNnZ1ejR0MDl2YjNicXNjd3R2dGx5ZCJ9.Y4aChG8-UtF_4FOQZF8R2Q';
+        const bounds = new mapboxgl.LngLatBounds();
+        bounds.extend([s.lng, s.lat]);
+        crossings.forEach(c => bounds.extend([c.lng, c.lat]));
+
+        const map = new mapboxgl.Map({
+            container:'gc-map', style:'mapbox://styles/mapbox/light-v11',
+            bounds: bounds, fitBoundsOptions: { padding: 60, maxZoom: 15 },
+            projection:'mercator', renderWorldCopies: false
+        });
+        map.addControl(new mapboxgl.NavigationControl({ showCompass: false }), 'top-right');
+        if (typeof _maps !== 'undefined') _maps['gradecrossings'] = map;
+
+        const railColor = ['match', ['get','RROWNER1']];
+        Object.entries(RAILROAD_COLORS).forEach(([k,v]) => { railColor.push(k, v); });
+        railColor.push(RAIL_DEFAULT);
+        const railWidth = ['interpolate',['linear'],['zoom'], 0,0.6, 4,1.2, 8,3.0, 12,5.0, 16,7.5];
+
+        map.on('style.load', () => {
+            RAIL_SOURCES.forEach(src => {
+                if (!map.getSource(src.id)) map.addSource(src.id, { type:'vector', url:src.url });
+                const id = src.id + '-lines';
+                if (!map.getLayer(id)) map.addLayer({
+                    id: id, type:'line', source: src.id, 'source-layer': src.sourceLayer,
+                    layout:{ 'line-join':'round','line-cap':'round' },
+                    paint:{ 'line-color': railColor, 'line-width': railWidth, 'line-opacity': 0.9 }
+                });
+            });
+
+            // Sensor marker (navy circle)
+            const sEl = document.createElement('div');
+            sEl.style.cssText = 'width:18px;height:18px;background:#083370;border:2px solid #fff;border-radius:50%;box-shadow:0 1px 3px rgba(0,0,0,0.5);';
+            new mapboxgl.Marker({element:sEl})
+                .setLngLat([s.lng, s.lat])
+                .setPopup(new mapboxgl.Popup({offset:14}).setHTML(
+                    '<strong>RailState Sensor #'+s.id+'</strong><br>'+s.name+
+                    '<br>'+s.lat.toFixed(4)+', '+s.lng.toFixed(4)+
+                    '<br>Operators: '+(s.operatingRailways||'--')))
+                .addTo(map);
+
+            // Crossing markers (red diamond)
+            crossings.forEach((c, i) => {
+                const el = document.createElement('div');
+                el.style.cssText = 'width:18px;height:18px;background:#DC2626;border:2px solid #fff;transform:rotate(45deg);box-shadow:0 1px 3px rgba(0,0,0,0.5);';
+                new mapboxgl.Marker({element:el, anchor:'center'})
+                    .setLngLat([c.lng, c.lat])
+                    .setPopup(new mapboxgl.Popup({offset:14}).setHTML(
+                        '<strong>'+c.name+'</strong><br>'+
+                        'Grade crossing on '+(s.railways||'rail line')+'<br>'+
+                        c.lat.toFixed(4)+', '+c.lng.toFixed(4)))
+                    .addTo(map);
+            });
+        });
+
+        // ── Chart.js defaults ──
+        Chart.defaults.font.family = "'Inter','Poppins',sans-serif";
+        Chart.defaults.font.size = 11;
+        Chart.defaults.color = '#6B7A8D';
+
+        // ── Monthly volume (stacked bar) ──
+        const monthly = D.monthly || [];
+        const months = Array.from(new Set(monthly.map(r=>r[0]))).sort();
+        const mDir1 = months.map(m => (monthly.find(r=>r[0]===m && r[1]===dir1)||[null,null,0])[2]);
+        const mDir2 = months.map(m => (monthly.find(r=>r[0]===m && r[1]===dir2)||[null,null,0])[2]);
+        new Chart(document.getElementById('gc-monthly'), {
+            type:'bar',
+            data:{ labels: months, datasets:[
+                { label: dir1, data: mDir1, backgroundColor: dirColor[dir1] },
+                { label: dir2, data: mDir2, backgroundColor: dirColor[dir2] }
+            ]},
+            options:{ responsive:true, maintainAspectRatio:false,
+                plugins:{ legend:{ position:'bottom' } },
+                scales:{ x:{stacked:true, grid:{display:false} }, y:{stacked:true, grid:{color:'#E0E7F0'}, title:{display:true,text:'Trains / month'} } } }
+        });
+
+        // ── Hourly ──
+        const h = D.hourly || [];
+        const hDir1 = Array.from({length:24}, (_,i)=> (h.find(r=>r[0]===i && r[1]===dir1)||[null,null,0])[2]);
+        const hDir2 = Array.from({length:24}, (_,i)=> (h.find(r=>r[0]===i && r[1]===dir2)||[null,null,0])[2]);
+        new Chart(document.getElementById('gc-hourly'), {
+            type:'bar',
+            data:{ labels: Array.from({length:24},(_,i)=>String(i).padStart(2,'0')+':00'),
+                datasets:[
+                    {label:dir1, data:hDir1, backgroundColor: dirColor[dir1]},
+                    {label:dir2, data:hDir2, backgroundColor: dirColor[dir2]}
+                ]},
+            options:{ responsive:true, maintainAspectRatio:false,
+                plugins:{ legend:{position:'bottom'}, title:{display:true,text:'Trains by hour of day'} },
+                scales:{ x:{stacked:true, grid:{display:false}}, y:{stacked:true, grid:{color:'#E0E7F0'}, title:{display:true,text:'Trains'} } } }
+        });
+
+        // ── DoW ──
+        const dw = D.dow || [];
+        const dDir1 = Array.from({length:7}, (_,i)=> (dw.find(r=>r[0]===i && r[1]===dir1)||[null,null,0])[2]);
+        const dDir2 = Array.from({length:7}, (_,i)=> (dw.find(r=>r[0]===i && r[1]===dir2)||[null,null,0])[2]);
+        new Chart(document.getElementById('gc-dow'), {
+            type:'bar',
+            data:{ labels: DOW_LABELS,
+                datasets:[
+                    {label:dir1, data:dDir1, backgroundColor: dirColor[dir1]},
+                    {label:dir2, data:dDir2, backgroundColor: dirColor[dir2]}
+                ]},
+            options:{ responsive:true, maintainAspectRatio:false,
+                plugins:{ legend:{position:'bottom'}, title:{display:true,text:'Trains by day of week'} },
+                scales:{ x:{stacked:true, grid:{display:false}}, y:{stacked:true, grid:{color:'#E0E7F0'}, title:{display:true,text:'Trains'} } } }
+        });
+
+        // ── Length histogram ──
+        const lh = D.length_hist || [];
+        const lLabels = Array.from({length:12}, (_,i)=> i+'–'+(i+1)+'k').concat('12k+');
+        const lDir1 = Array.from({length:13}, (_,i)=> (lh.find(r=>r[0]===dir1 && r[1]===i)||[null,null,0])[2]);
+        const lDir2 = Array.from({length:13}, (_,i)=> (lh.find(r=>r[0]===dir2 && r[1]===i)||[null,null,0])[2]);
+        new Chart(document.getElementById('gc-length'), {
+            type:'bar',
+            data:{ labels: lLabels,
+                datasets:[
+                    {label:dir1, data:lDir1, backgroundColor: dirColor[dir1]},
+                    {label:dir2, data:lDir2, backgroundColor: dirColor[dir2]}
+                ]},
+            options:{ responsive:true, maintainAspectRatio:false,
+                plugins:{ legend:{position:'bottom'}, title:{display:true,text:'Train length (feet)'} },
+                scales:{ x:{grid:{display:false}, title:{display:true,text:'Length (ft)'} }, y:{grid:{color:'#E0E7F0'}, title:{display:true,text:'Trains'} } } }
+        });
+
+        // ── Duration histogram ──
+        const uh = D.dur_hist || [];
+        const uLabels = Array.from({length:12}, (_,i)=> (i*30)+'–'+((i+1)*30)+'s').concat('6m+');
+        const uDir1 = Array.from({length:13}, (_,i)=> (uh.find(r=>r[0]===dir1 && r[1]===i)||[null,null,0])[2]);
+        const uDir2 = Array.from({length:13}, (_,i)=> (uh.find(r=>r[0]===dir2 && r[1]===i)||[null,null,0])[2]);
+        new Chart(document.getElementById('gc-duration'), {
+            type:'bar',
+            data:{ labels: uLabels,
+                datasets:[
+                    {label:dir1, data:uDir1, backgroundColor: dirColor[dir1]},
+                    {label:dir2, data:uDir2, backgroundColor: dirColor[dir2]}
+                ]},
+            options:{ responsive:true, maintainAspectRatio:false,
+                plugins:{ legend:{position:'bottom'}, title:{display:true,text:'Crossing blockage duration'} },
+                scales:{ x:{grid:{display:false}, title:{display:true,text:'Duration'} }, y:{grid:{color:'#E0E7F0'}, title:{display:true,text:'Trains'} } } }
+        });
+
+        // ── Direction summary table ──
+        const dirRows = [];
+        [dir1, dir2].forEach(name => {
+            const st = (D.dir_stats || {})[name]; if (!st) return;
+            dirRows.push(
+                '<tr><td><strong>'+name+'</strong></td>'+
+                '<td class="val-rs">'+fmtInt(st.n)+'</td>'+
+                '<td>'+(st.avg_mph||0).toFixed(1)+' mph</td>'+
+                '<td>'+fmtInt(st.med_len_ft)+' ft</td>'+
+                '<td>'+fmtInt(st.p90_len)+' ft</td>'+
+                '<td>'+fmtSec(st.med_dur)+'</td>'+
+                '<td>'+fmtSec(st.p90_dur)+'</td>'+
+                '<td>'+fmtMin(st.max_dur)+'</td></tr>'
+            );
+        });
+        document.querySelector('#gc-dir-table tbody').innerHTML = dirRows.join('');
+
+        // ── Train type table ──
+        const byType = {};
+        (D.by_type || []).forEach(r => {
+            const k = r[0] || 'Unknown';
+            if (!byType[k]) byType[k] = {a:0,b:0,total:0};
+            if (r[1] === dir1) byType[k].a += r[2];
+            else if (r[1] === dir2) byType[k].b += r[2];
+            byType[k].total += r[2];
+        });
+        const sortedTypes = Object.entries(byType).sort((a,bb)=>bb[1].total-a[1].total);
+        document.querySelector('#gc-type-table thead tr').innerHTML =
+            '<th>Train type</th><th>Total</th><th>'+dir1+'</th><th>'+dir2+'</th><th>Share</th>';
+        document.querySelector('#gc-type-table tbody').innerHTML = sortedTypes.map(([k,v]) =>
+            '<tr><td>'+k+'</td><td class="val-rs">'+fmtInt(v.total)+'</td><td>'+fmtInt(v.a)+'</td><td>'+fmtInt(v.b)+'</td><td>'+fmtPct(v.total,t.n)+'</td></tr>'
+        ).join('');
+
+        // ── Heatmap (HTML table) ──
+        const heat = Array.from({length:7}, ()=> Array(24).fill(0));
+        const heatN = Array.from({length:7}, ()=> Array(24).fill(0));
+        let hmMax = 0;
+        (D.heatmap || []).forEach(r => {
+            const v = (r[3] || 0) / 60.0; // minutes
+            heat[r[0]][r[1]] = v;
+            heatN[r[0]][r[1]] = r[2];
+            if (v > hmMax) hmMax = v;
+        });
+        function heatCol(v) {
+            if (!v) return '#F5F5F5';
+            const tn = Math.min(v/hmMax, 1);
+            const stops = [
+                {at:0, c:[224,231,240]},
+                {at:0.35, c:[128,188,44]},
+                {at:0.70, c:[245,158,11]},
+                {at:1.00, c:[220,38,38]}
+            ];
+            let lo=stops[0], hi=stops[stops.length-1];
+            for (let i=1; i<stops.length; i++) { if (tn<=stops[i].at) { lo=stops[i-1]; hi=stops[i]; break; } }
+            const k = (hi.at-lo.at) ? (tn-lo.at)/(hi.at-lo.at) : 0;
+            const c = lo.c.map((x,i)=>Math.round(x+(hi.c[i]-x)*k));
+            return 'rgb('+c[0]+','+c[1]+','+c[2]+')';
+        }
+        let html = '<table style="width:100%;border-collapse:collapse;font-family:\'JetBrains Mono\',monospace;font-size:10px;"><thead><tr><th></th>';
+        for (let i=0; i<24; i++) html += '<th style="padding:4px 2px;color:var(--text-muted);font-weight:600;">'+String(i).padStart(2,'0')+'</th>';
+        html += '</tr></thead><tbody>';
+        for (let r=0; r<7; r++) {
+            html += '<tr><td style="text-align:right;color:var(--rs-blue);font-weight:700;padding:6px 8px;">'+DOW_LABELS[r]+'</td>';
+            for (let h2=0; h2<24; h2++) {
+                const v = heat[r][h2], n = heatN[r][h2];
+                html += '<td title="'+DOW_LABELS[r]+' '+h2+':00 — '+n+' trains, '+v.toFixed(0)+' min" style="padding:6px 2px;text-align:center;background:'+heatCol(v)+';color:#fff;font-weight:600;min-width:24px;">'+(v?Math.round(v):'')+'</td>';
+            }
+            html += '</tr>';
+        }
+        html += '</tbody></table>';
+        document.getElementById('gc-heatmap').innerHTML = html;
+
+        // ── Longest blockages ──
+        document.querySelector('#gc-long-table tbody').innerHTML = (b.top_long || []).map(row => {
+            const ts = row.ts ? new Date(row.ts) : null;
+            return '<tr>' +
+                '<td>'+(ts ? ts.toLocaleString(undefined,{weekday:'short',year:'numeric',month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}) : '--')+'</td>' +
+                '<td>'+row.direction+'</td>' +
+                '<td>'+(row.train_type||'--')+'</td>' +
+                '<td class="val-rs">'+fmtMin(row.dur_sec)+'</td>' +
+                '<td>'+(row.length_ft?fmtInt(row.length_ft)+' ft':'--')+'</td>' +
+                '<td>'+(row.speed_mph!=null?row.speed_mph.toFixed(1)+' mph':'--')+'</td>' +
+                '</tr>';
+        }).join('');
+
+        // ── Per-crossing table ──
+        document.querySelector('#gc-crossings-table tbody').innerHTML = crossings.map(c => {
+            const d = haversine([s.lat,s.lng],[c.lat,c.lng]);
+            const ft = d * 3.28084;
+            const dispDist = ft < 5280 ? Math.round(ft).toLocaleString()+' ft' : (ft/5280).toFixed(2)+' mi';
+            return '<tr><td><strong>'+c.name+'</strong></td>' +
+                '<td>'+c.lat.toFixed(5)+', '+c.lng.toFixed(5)+'</td>' +
+                '<td class="val-rs">'+dispDist+'</td></tr>';
+        }).join('');
+    }
+};
+/* ── END initCharts.gradecrossings (auto-injected) ── */
+
 initCharts.overview();
 chartInited.overview = true;
 </script>
