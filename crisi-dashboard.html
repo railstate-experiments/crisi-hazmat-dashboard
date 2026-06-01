@@ -495,6 +495,7 @@
     <span class="tab-dot"></span> State Rail Planning
   </button>
 
+
   <button class="tab-btn" data-tab="gradecrossings" onclick="switchTab('gradecrossings')">
     <span class="tab-dot"></span> Grade Crossings
   </button>
@@ -1572,6 +1573,8 @@
 
 
 
+
+
 <!-- ── BEGIN Grade Crossings tab (auto-injected) ── -->
 <div class="tab-panel" id="tab-gradecrossings">
 
@@ -1616,6 +1619,13 @@
   <div class="charts-grid">
 
     <!-- ── Map ── -->
+    <!-- NB: keep the map OUTSIDE `.chart-wrap` so the dashboard rule
+         `.chart-wrap canvas { max-height: 280px }` doesn't clip the Mapbox
+         render canvas. -->
+    <style>
+      #gc-map .mapboxgl-canvas { max-height: none !important; }
+      #gc-map canvas { max-height: none !important; }
+    </style>
     <div class="chart-section">
       <div class="chart-section-header">
         <div>
@@ -1627,8 +1637,8 @@
           </div>
         </div>
       </div>
-      <div class="chart-wrap" style="padding:0 18px 22px;">
-        <div id="gc-map" style="height:480px;border-radius:8px;border:1px solid var(--border);"></div>
+      <div style="padding:0 26px 22px;">
+        <div id="gc-map" style="height:520px;width:100%;border-radius:8px;border:1px solid var(--border);overflow:hidden;"></div>
       </div>
     </div>
 
@@ -2587,6 +2597,8 @@ initCharts.corridor = () => {
 // Initialize overview tab on load
 
 
+
+
 /* ── BEGIN initCharts.gradecrossings (auto-injected) ── */
 initCharts.gradecrossings = function() {
     const DOW_LABELS = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
@@ -2684,6 +2696,88 @@ initCharts.gradecrossings = function() {
         railColor.push(RAIL_DEFAULT);
         const railWidth = ['interpolate',['linear'],['zoom'], 0,0.6, 4,1.2, 8,3.0, 12,5.0, 16,7.5];
 
+        // ── Snap a (lng,lat) onto the closest line in a list of GeoJSON line features
+        //    (small-area equirectangular projection — good enough at city scale). ──
+        function snapToFeatures(point, features) {
+            if (!features || !features.length) return null;
+            const lat0 = point[1];
+            const Rm = 6371000;
+            const cos0 = Math.cos(lat0 * Math.PI / 180);
+            const toXY = (lng, lat) => [
+                lng * Math.PI / 180 * Rm * cos0,
+                lat * Math.PI / 180 * Rm
+            ];
+            const fromXY = (x, y) => [
+                (x / (Rm * cos0)) * 180 / Math.PI,
+                (y / Rm) * 180 / Math.PI
+            ];
+            const [px, py] = toXY(point[0], point[1]);
+            let best = null, bestD = Infinity;
+            for (const f of features) {
+                const lines = (f.geometry.type === 'MultiLineString')
+                    ? f.geometry.coordinates
+                    : (f.geometry.type === 'LineString' ? [f.geometry.coordinates] : []);
+                for (const line of lines) {
+                    for (let i = 0; i < line.length - 1; i++) {
+                        const [ax, ay] = toXY(line[i][0],   line[i][1]);
+                        const [bx, by] = toXY(line[i+1][0], line[i+1][1]);
+                        const abx = bx - ax, aby = by - ay;
+                        const denom = abx * abx + aby * aby;
+                        let t = 0;
+                        if (denom > 0) {
+                            t = ((px - ax) * abx + (py - ay) * aby) / denom;
+                            t = Math.max(0, Math.min(1, t));
+                        }
+                        const cx = ax + t * abx, cy = ay + t * aby;
+                        const d = Math.hypot(px - cx, py - cy);
+                        if (d < bestD) { bestD = d; best = [cx, cy]; }
+                    }
+                }
+            }
+            if (!best) return null;
+            return fromXY(best[0], best[1]).concat([bestD]);  // [lng, lat, distMeters]
+        }
+
+        function placeMarkers() {
+            // Pull the actual rail features within view from the loaded sources.
+            // We zoom out a touch + zoom back to ensure tiles for the full bounds
+            // are loaded; otherwise querySourceFeatures may miss segments at the
+            // edges. After idle, every visible tile has been processed.
+            const features = [];
+            RAIL_SOURCES.forEach(src => {
+                try {
+                    const feats = map.querySourceFeatures(src.id, { sourceLayer: src.sourceLayer });
+                    features.push(...feats);
+                } catch (e) {}
+            });
+
+            // Sensor marker (navy circle) — snap onto the rail line too.
+            const sensorXY = snapToFeatures([s.lng, s.lat], features) || [s.lng, s.lat, 0];
+            const sEl = document.createElement('div');
+            sEl.style.cssText = 'width:18px;height:18px;background:#083370;border:2px solid #fff;border-radius:50%;box-shadow:0 1px 3px rgba(0,0,0,0.5);';
+            new mapboxgl.Marker({element:sEl})
+                .setLngLat([sensorXY[0], sensorXY[1]])
+                .setPopup(new mapboxgl.Popup({offset:14}).setHTML(
+                    '<strong>RailState Sensor #'+s.id+'</strong><br>'+s.name+
+                    '<br>'+sensorXY[1].toFixed(5)+', '+sensorXY[0].toFixed(5)+
+                    '<br>Operators: '+(s.operatingRailways||'--')))
+                .addTo(map);
+
+            // Crossing markers (red diamond)
+            crossings.forEach(c => {
+                const xy = snapToFeatures([c.lng, c.lat], features) || [c.lng, c.lat, 0];
+                const el = document.createElement('div');
+                el.style.cssText = 'width:18px;height:18px;background:#DC2626;border:2px solid #fff;transform:rotate(45deg);box-shadow:0 1px 3px rgba(0,0,0,0.5);';
+                new mapboxgl.Marker({element:el, anchor:'center'})
+                    .setLngLat([xy[0], xy[1]])
+                    .setPopup(new mapboxgl.Popup({offset:14}).setHTML(
+                        '<strong>'+c.name+'</strong><br>'+
+                        'Grade crossing on '+(s.railways||'rail line')+'<br>'+
+                        xy[1].toFixed(5)+', '+xy[0].toFixed(5)))
+                    .addTo(map);
+            });
+        }
+
         map.on('style.load', () => {
             RAIL_SOURCES.forEach(src => {
                 if (!map.getSource(src.id)) map.addSource(src.id, { type:'vector', url:src.url });
@@ -2694,30 +2788,20 @@ initCharts.gradecrossings = function() {
                     paint:{ 'line-color': railColor, 'line-width': railWidth, 'line-opacity': 0.9 }
                 });
             });
+        });
 
-            // Sensor marker (navy circle)
-            const sEl = document.createElement('div');
-            sEl.style.cssText = 'width:18px;height:18px;background:#083370;border:2px solid #fff;border-radius:50%;box-shadow:0 1px 3px rgba(0,0,0,0.5);';
-            new mapboxgl.Marker({element:sEl})
-                .setLngLat([s.lng, s.lat])
-                .setPopup(new mapboxgl.Popup({offset:14}).setHTML(
-                    '<strong>RailState Sensor #'+s.id+'</strong><br>'+s.name+
-                    '<br>'+s.lat.toFixed(4)+', '+s.lng.toFixed(4)+
-                    '<br>Operators: '+(s.operatingRailways||'--')))
-                .addTo(map);
-
-            // Crossing markers (red diamond)
-            crossings.forEach((c, i) => {
-                const el = document.createElement('div');
-                el.style.cssText = 'width:18px;height:18px;background:#DC2626;border:2px solid #fff;transform:rotate(45deg);box-shadow:0 1px 3px rgba(0,0,0,0.5);';
-                new mapboxgl.Marker({element:el, anchor:'center'})
-                    .setLngLat([c.lng, c.lat])
-                    .setPopup(new mapboxgl.Popup({offset:14}).setHTML(
-                        '<strong>'+c.name+'</strong><br>'+
-                        'Grade crossing on '+(s.railways||'rail line')+'<br>'+
-                        c.lat.toFixed(4)+', '+c.lng.toFixed(4)))
-                    .addTo(map);
-            });
+        // Wait for tiles to settle before snapping. `idle` fires when no
+        // further sources/tiles are loading and the map has finished
+        // rendering — at that point querySourceFeatures returns all
+        // currently visible rail segments.
+        let _placed = false;
+        map.on('idle', () => {
+            if (_placed) return;
+            _placed = true;
+            placeMarkers();
+            // Belt-and-suspenders: also resize once everything settled in case
+            // the container's dimensions weren't final when we created the map.
+            setTimeout(() => map.resize(), 50);
         });
 
         // ── Chart.js defaults ──
