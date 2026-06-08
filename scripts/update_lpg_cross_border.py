@@ -45,7 +45,7 @@ TRANSIT_WINDOW_DAYS = 7
 
 SCRIPT_DIR = Path(__file__).resolve().parent
 DATA_DIR = SCRIPT_DIR.parent / "data"
-BORDER_CROSSING_DIR = Path("/Users/dandevoe/Desktop/RailState Project/Claude_Projects/Border Crossing/output")
+BORDER_CROSSING_DIR = Path("/Users/dandevoe/Desktop/RailState Project/Claude_Projects/Border Crossing/lpg/output")
 
 # Historical data files
 HIST_MONTHLY_CSV = BORDER_CROSSING_DIR / "lpg_railstate_monthly.csv"

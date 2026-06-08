@@ -5,7 +5,7 @@
   "unit": "barrels (k)",
   "gov_source_label": "CER",
   "gov_lag_label": "8\u201310 wks",
-  "last_updated": "2026-03-17",
+  "last_updated": "2026-06-08",
   "monthly": {
     "description": "Monthly totals in thousands of BBL. railstate = weighted BBL from sensor data after transit removal. gov = CER Railway export volumes.",
     "columns": [
@@ -87,56 +87,71 @@
       [
         "2025-05",
         4157,
-        3859
+        3861
       ],
       [
         "2025-06",
         3927,
-        3451
+        3452
       ],
       [
         "2025-07",
         4101,
-        3590
+        3592
       ],
       [
         "2025-08",
         4346,
-        3755
+        3757
       ],
       [
         "2025-09",
         4391,
-        4030
+        4032
       ],
       [
         "2025-10",
         5411,
-        5047
+        5049
       ],
       [
         "2025-11",
         5966,
-        6001
+        6004
       ],
       [
         "2025-12",
         6178,
-        6516
+        6629
       ],
       [
         "2026-01",
-        6946,
-        null
+        6646,
+        6620
       ],
       [
         "2026-02",
-        6635,
-        null
+        6484,
+        7024
       ],
       [
         "2026-03",
-        3964,
+        6541,
+        5704
+      ],
+      [
+        "2026-04",
+        5165,
+        null
+      ],
+      [
+        "2026-05",
+        5302,
+        null
+      ],
+      [
+        "2026-06",
+        1728,
         null
       ]
     ]
